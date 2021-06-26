@@ -6,7 +6,6 @@ import android.view.*
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.nongmah.noteapp.R
-import com.nongmah.noteapp.data.remote.BasicAuthInterceptor
 import com.nongmah.noteapp.databinding.FragmentNotesBinding
 import com.nongmah.noteapp.other.Constants
 import com.nongmah.noteapp.ui.BaseFragment
@@ -18,8 +17,6 @@ class NotesFragment : BaseFragment(R.layout.fragment_notes) {
 
     @Inject
     lateinit var sharedPreferences: SharedPreferences
-    @Inject
-    lateinit var basicAuthInterceptor: BasicAuthInterceptor
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,8 +47,6 @@ class NotesFragment : BaseFragment(R.layout.fragment_notes) {
     private fun logout() {
         sharedPreferences.edit().putString(Constants.KEY_LOGGED_IN_EMAIL, Constants.NO_EMAIL).apply()
         sharedPreferences.edit().putString(Constants.KEY_PASSWORD, Constants.NO_PASSWORD).apply()
-        basicAuthInterceptor.email = null
-        basicAuthInterceptor.password = null
 
         val navOptions = NavOptions.Builder()
             .setPopUpTo(R.id.notesFragment, true).build()
