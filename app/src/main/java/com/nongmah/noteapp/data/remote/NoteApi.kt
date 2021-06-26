@@ -33,11 +33,11 @@ interface NoteApi {
         @Body deleteNoteRequest: DeleteNoteRequest
     ): Response<ResponseBody>
 
-    @POST("/add-owner-to_note")
+    @POST("/add-owner-to-note")
     suspend fun addOwnerToNote(
         @Body addOwnerRequest: AddOwnerRequest
     ): Response<SimpleResponse>
 
-    @GET("/get-note")
+    @GET("/get-notes")
     suspend fun getNote(): Response<List<Note>>
 }
