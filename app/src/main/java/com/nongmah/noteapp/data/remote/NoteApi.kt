@@ -39,5 +39,5 @@ interface NoteApi {
     ): Response<SimpleResponse>
 
     @GET("/get-notes")
-    suspend fun getNote(): Response<List<Note>>
+    suspend fun getNotes(): Response<List<Note>>
 }

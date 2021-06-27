@@ -52,6 +52,7 @@ class NotesFragment : BaseFragment(R.layout.fragment_notes) {
         binding = FragmentNotesBinding.bind(view)
 
         setupRecyclerView()
+        setupSwipeRefreshLayout()
         subscribeToObservers()
 
         noteAdapter.setOnItemClickListener {
@@ -137,6 +138,12 @@ class NotesFragment : BaseFragment(R.layout.fragment_notes) {
                 }
                 show()
             }
+        }
+    }
+
+    private fun setupSwipeRefreshLayout() {
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            viewModel.syncAllNotes()
         }
     }
 
