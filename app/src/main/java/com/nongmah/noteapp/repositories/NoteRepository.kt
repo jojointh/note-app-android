@@ -60,20 +60,14 @@ class NoteRepository @Inject constructor(
 
     suspend fun getNoteById(noteID: String) = noteDao.getNoteById(noteID)
 
-    private var currentNotesResponse: Response<List<Note>>? = null
-
-    suspend fun syncNotes() {
+    private suspend fun syncNotes(): Response<List<Note>> {
         val locallyDeletedNoteIDs = noteDao.getAllLocallyDeletedNoteIDs()
         locallyDeletedNoteIDs.forEach { id -> deleteNote(id.deletedNoteID) }
 
         val unsyncedNotes = noteDao.getAllUnsyncedNotes()
         unsyncedNotes.forEach { note -> insertNote(note) }
 
-        currentNotesResponse = noteApi.getNotes()
-        currentNotesResponse?.body()?.let { notes ->
-            noteDao.deleteAllNotes()
-            insertNotes(notes.onEach { note -> note.isSynced = true })
-        }
+        return noteApi.getNotes()
     }
 
     fun getAllNotes(): Flow<Resource<List<Note>>> {
@@ -83,11 +77,11 @@ class NoteRepository @Inject constructor(
             },
             fetch = {
                 syncNotes()
-                currentNotesResponse
             },
             saveFetchResult = { response ->
-                response?.body()?.let {
-                    insertNotes(it.onEach { note -> note.isSynced = true })
+                response.body()?.let { notes ->
+                    noteDao.deleteAllNotes()
+                    insertNotes(notes.onEach { note -> note.isSynced = true })
                 }
             },
             shouldFetch = {
