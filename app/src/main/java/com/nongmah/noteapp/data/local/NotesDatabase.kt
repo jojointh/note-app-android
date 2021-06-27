@@ -3,9 +3,10 @@ package com.nongmah.noteapp.data.local
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.nongmah.noteapp.data.local.entities.LocallyDeletedNoteID
 import com.nongmah.noteapp.data.local.entities.Note
 
-@Database(entities = [Note::class], version = 1)
+@Database(entities = [Note::class, LocallyDeletedNoteID::class], version = 1)
 @TypeConverters(Converters::class)
 abstract class NotesDatabase : RoomDatabase() {
 

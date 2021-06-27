@@ -6,6 +6,7 @@ import com.nongmah.noteapp.other.Event
 import com.nongmah.noteapp.other.Resource
 import com.nongmah.noteapp.repositories.NoteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,4 +25,16 @@ class NotesViewModel @Inject constructor(
     val allNotes: LiveData<Event<Resource<List<Note>>>> = _allNotes
 
     fun syncAllNotes() = _forceUpdate.postValue(true)
+
+    fun insertNote(note: Note) = viewModelScope.launch {
+        repository.insertNote(note)
+    }
+
+    fun deleteNote(noteId: String) = viewModelScope.launch {
+        repository.deleteNote(noteId)
+    }
+
+    fun deleteLocallyDeletedNoteID(deletedNoteID: String) = viewModelScope.launch {
+        repository.deleteLocallyDeletedNoteID(deletedNoteID)
+    }
 }

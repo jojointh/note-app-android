@@ -2,9 +2,11 @@ package com.nongmah.noteapp.repositories
 
 import android.app.Application
 import com.nongmah.noteapp.data.local.NoteDao
+import com.nongmah.noteapp.data.local.entities.LocallyDeletedNoteID
 import com.nongmah.noteapp.data.local.entities.Note
 import com.nongmah.noteapp.data.remote.NoteApi
 import com.nongmah.noteapp.data.remote.requests.AccountRequest
+import com.nongmah.noteapp.data.remote.requests.DeleteNoteRequest
 import com.nongmah.noteapp.other.Resource
 import com.nongmah.noteapp.other.checkForInternetConnection
 import com.nongmah.noteapp.other.networkBoundResource
@@ -35,6 +37,24 @@ class NoteRepository @Inject constructor(
 
     suspend fun insertNotes(notes: List<Note>) {
         notes.forEach { insertNote(it) }
+    }
+
+    suspend fun deleteNote(noteID: String) {
+        val response = try {
+            noteApi.deleteNote(DeleteNoteRequest(noteID))
+        } catch (e: Exception) {
+            null
+        }
+        noteDao.deleteNoteById(noteID)
+        if (response == null || !response.isSuccessful) {
+            noteDao.insertLocallyDeletedNoteID(LocallyDeletedNoteID(noteID))
+        } else {
+            deleteLocallyDeletedNoteID(noteID)
+        }
+    }
+
+    suspend fun deleteLocallyDeletedNoteID(deletedNoteID: String) {
+        noteDao.deleteLocallyDeletedNoteID(deletedNoteID)
     }
 
     suspend fun getNoteById(noteID: String) = noteDao.getNoteById(noteID)
