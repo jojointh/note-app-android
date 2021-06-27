@@ -54,7 +54,7 @@ class AddEditNoteFragment : BaseFragment(R.layout.fragment_add_edit_note) {
 
         val title = binding.etNoteTitle.text.toString()
         val content = binding.etNoteContent.text.toString()
-        if (title.isNotEmpty() || content.isNotEmpty()) {
+        if (title.isEmpty() || content.isEmpty()) {
             return
         }
         val date = System.currentTimeMillis()
