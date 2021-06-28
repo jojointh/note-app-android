@@ -6,6 +6,7 @@ import com.nongmah.noteapp.data.local.entities.LocallyDeletedNoteID
 import com.nongmah.noteapp.data.local.entities.Note
 import com.nongmah.noteapp.data.remote.NoteApi
 import com.nongmah.noteapp.data.remote.requests.AccountRequest
+import com.nongmah.noteapp.data.remote.requests.AddOwnerRequest
 import com.nongmah.noteapp.data.remote.requests.DeleteNoteRequest
 import com.nongmah.noteapp.other.Resource
 import com.nongmah.noteapp.other.checkForInternetConnection
@@ -90,6 +91,19 @@ class NoteRepository @Inject constructor(
                 checkForInternetConnection(context)
             }
         )
+    }
+
+    suspend fun addOwnerToNote(owner: String, noteID: String) = withContext(Dispatchers.IO) {
+        try {
+            val response = noteApi.addOwnerToNote(AddOwnerRequest(owner, noteID))
+            if (response.isSuccessful && response.body()?.successful == true) {
+                Resource.success(response.body()?.message)
+            } else {
+                Resource.error(response.body()?.message ?: response.message(), null)
+            }
+        } catch (e: Exception) {
+            Resource.error("Couldn't connect to the server. Check your internet connection", null)
+        }
     }
 
     suspend fun login(email: String, password: String) = withContext(Dispatchers.IO) {
